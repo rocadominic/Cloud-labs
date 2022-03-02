@@ -36,18 +36,62 @@ http.createServer(async function(request, response) {
         var lineReader = require('readline').createInterface({
             input: fs.createReadStream('logs.txt')
         });
-        linecount = 0;
-        //avg latency per api(4 cu tot cu mine)
-        //status codes per total cate de fiecare
-        //get sau post cate de fiecare
-        //gitignore node_module, config.txt, logs.txt, .vscode
-        lineReader.on('line', function(line) {
+        var linecount = 0;
+        var lat = {
+            'localhost': [],
+            'dog': [],
+            'chuck': [],
+            'meme': []
+        };
+        var count = {
+            'localhost': 0,
+            'dog': 0,
+            'chuck': 0,
+            'meme': 0
+        };
+        var stat = {
+            '200': 0,
+            '404': 0
+        };
+        var methods = {
+            'GET': 0,
+            'POST': 0
+        };
+        fs.readFileSync('logs.txt', 'utf-8').split(/\r?\n/).forEach(function(line) {
             line = line.trim().split('|');
+            if (methods[String(line[0])] == undefined) methods[String(line[0])] = 0;
+            methods[String(line[0])] += 1;
+            if (stat[String(line[2])] == undefined) stat[String(line[2])] = 0;
+            stat[String(line[2])] += 1;
+            if (String(line[1]).includes('dog')) {
+                lat['dog'].push(line[3]);
+                count['dog'] += 1;
+            } else if (String(line[1]).includes('chuck')) {
+                lat['chuck'].push(line[3]);
+                count['chuck'] += 1;
+            } else if (String(line[1]).includes('meme')) {
+                lat['meme'].push(line[3]);
+                count['meme'] += 1;
+            } else {
+                lat['localhost'].push(line[3]);
+                count['localhost'] += 1;
+            }
             linecount += 1;
-            console.log(line);
         });
+        const average = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+        //lat['dog'] = average(lat['dog']);
+        //lat['chuck'] = average(lat['chuck']);
+        //lat['meme'] = average(lat['meme']);
+        //lat['localhost'] = average(lat['localhost']);
+        delete stat['undefined'];
+        delete methods[""];
+        respBody = "<p>Methods: " + JSON.stringify(methods) + "</p>"
+        respBody += "<p>Status codes: " + JSON.stringify(stat) + "</p>"
+        respBody += "<p>Requests per endpoint: " + JSON.stringify(count) + "</p>"
+        respBody += "<p>Latencies per endpoint: " + JSON.stringify(lat) + "</p>"
+        respBody += "<p>Total requests: " + linecount + "</p>"
         response.writeHead(200, { 'Content-Type': 'text/html' });
-        response.end("metrics here", 'utf-8');
+        response.end(respBody, 'utf-8');
     } else if (request.url == "/") {
         response.writeHead(200, { 'Content-Type': 'text/html' });
 
