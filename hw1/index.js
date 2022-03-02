@@ -43,6 +43,12 @@ http.createServer(async function(request, response) {
             'chuck': [],
             'meme': []
         };
+        var avglat = {
+            'localhost': 0,
+            'dog': 0,
+            'chuck': 0,
+            'meme': 0
+        };
         var count = {
             'localhost': 0,
             'dog': 0,
@@ -78,17 +84,28 @@ http.createServer(async function(request, response) {
             }
             linecount += 1;
         });
-        const average = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
-        //lat['dog'] = average(lat['dog']);
-        //lat['chuck'] = average(lat['chuck']);
-        //lat['meme'] = average(lat['meme']);
-        //lat['localhost'] = average(lat['localhost']);
+        for (let i = 0; i < lat['dog'].length - 1; i++) {
+            lat['dog'][i] /= count['dog'];
+            avglat['dog'] += lat['dog'][i];
+        }
+        for (let i = 0; i < lat['chuck'].length - 1; i++) {
+            lat['chuck'][i] /= count['chuck'];
+            avglat['chuck'] += lat['chuck'][i];
+        }
+        for (let i = 0; i < lat['meme'].length - 1; i++) {
+            lat['meme'][i] /= count['meme'];
+            avglat['meme'] += lat['meme'][i];
+        }
+        for (let i = 0; i < lat['localhost'].length - 1; i++) {
+            lat['localhost'][i] /= count['localhost'];
+            avglat['localhost'] += lat['localhost'][i];
+        }
         delete stat['undefined'];
         delete methods[""];
         respBody = "<p>Methods: " + JSON.stringify(methods) + "</p>"
         respBody += "<p>Status codes: " + JSON.stringify(stat) + "</p>"
         respBody += "<p>Requests per endpoint: " + JSON.stringify(count) + "</p>"
-        respBody += "<p>Latencies per endpoint: " + JSON.stringify(lat) + "</p>"
+        respBody += "<p>Latencies per endpoint: " + JSON.stringify(avglat) + "</p>"
         respBody += "<p>Total requests: " + linecount + "</p>"
         response.writeHead(200, { 'Content-Type': 'text/html' });
         response.end(respBody, 'utf-8');
