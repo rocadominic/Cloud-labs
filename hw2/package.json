@@ -1,0 +1,27 @@
+{
+  "name": "hw2",
+  "version": "1.0.0",
+  "description": "Homework 2",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rocadominic/Cloud-labs.git"
+  },
+  "keywords": [
+    "cloud",
+    "rest",
+    "api"
+  ],
+  "author": "Dominic-Eduard Roca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rocadominic/Cloud-labs/issues"
+  },
+  "homepage": "https://github.com/rocadominic/Cloud-labs#readme",
+  "dependencies": {
+    "mongodb": "^4.4.1"
+  }
+}
